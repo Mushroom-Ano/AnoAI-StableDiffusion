@@ -8,6 +8,7 @@ the correct AMD GPU is used instead of the integrated GPU.
 import os
 import sys
 from typing import Optional, Dict
+import psutil
 
 try:
     import torch_directml
@@ -90,22 +91,51 @@ class GPUConfig:
             "device_object": str(self.device)
         }
 
+    def get_memory_info(self) -> Dict[str, str]:
+        """
+        Get system memory information.
+        Note: DirectML doesn't directly expose GPU VRAM usage like CUDA.
+        """
+        # Get system RAM info
+        ram = psutil.virtual_memory()
+        ram_total_gb = ram.total / (1024**3)
+        ram_used_gb = ram.used / (1024**3)
+        ram_available_gb = ram.available / (1024**3)
+        ram_percent = ram.percent
+
+        return {
+            "ram_total": f"{ram_total_gb:.1f} GB",
+            "ram_used": f"{ram_used_gb:.1f} GB ({ram_percent:.1f}%)",
+            "ram_available": f"{ram_available_gb:.1f} GB",
+        }
+
     def print_device_info(self):
         """Print formatted device information to console."""
         info = self.get_device_info()
+        mem_info = self.get_memory_info()
 
-        print("\n" + "="*60)
+        print("\n" + "="*70)
         print("GPU CONFIGURATION")
-        print("="*60)
+        print("="*70)
 
         for key, value in info.items():
             formatted_key = key.replace("_", " ").title()
             print(f"{formatted_key:20s}: {value}")
 
-        print("="*60)
-        print(f"Using GPU Device {self.device_id} (AMD RX 9070 XT)")
+        print("="*70)
+        print(f"Using GPU Device {self.device_id} (AMD RX 9070 XT - 16GB VRAM)")
         print("Device 0 (integrated GPU) will be ignored")
-        print("="*60 + "\n")
+        print("="*70)
+
+        print("\nSYSTEM MEMORY STATUS")
+        print("-"*70)
+        print(f"RAM Total         : {mem_info['ram_total']}")
+        print(f"RAM Used          : {mem_info['ram_used']}")
+        print(f"RAM Available     : {mem_info['ram_available']}")
+        print("-"*70)
+        print("Note: DirectML will use GPU VRAM (16GB) for model inference")
+        print("      System RAM shown above is for non-GPU operations")
+        print("="*70 + "\n")
 
 
 def initialize_gpu(device_id: int = 1) -> torch_directml.device:
@@ -122,6 +152,24 @@ def initialize_gpu(device_id: int = 1) -> torch_directml.device:
     device = gpu_config.setup_device()
     gpu_config.print_device_info()
     return device
+
+
+def print_memory_usage(label: str = "Current"):
+    """
+    Print current system memory usage.
+
+    Args:
+        label: Label for this memory check
+    """
+    ram = psutil.virtual_memory()
+    ram_used_gb = ram.used / (1024**3)
+    ram_available_gb = ram.available / (1024**3)
+    ram_percent = ram.percent
+
+    print(f"\n[{label} Memory Usage]")
+    print(f"  System RAM Used: {ram_used_gb:.1f} GB ({ram_percent:.1f}%)")
+    print(f"  System RAM Free: {ram_available_gb:.1f} GB")
+    print(f"  Note: Model should be loaded in GPU VRAM (16GB), not system RAM")
 
 
 if __name__ == "__main__":

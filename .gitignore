@@ -34,9 +34,15 @@ outputs/
 *.jpg
 *.jpeg
 
-# Model cache (optional - uncomment if you want to exclude cached models)
-# .cache/
-# models/
+# Model files (exclude large model files from git)
+.cache/
+models/*.safetensors
+models/*.ckpt
+models/*.pt
+models/*.pth
+models/*.bin
+# Keep the models/README.md
+!models/README.md
 
 # IDE
 .vscode/
