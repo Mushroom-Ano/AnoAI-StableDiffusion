@@ -1,403 +1,361 @@
-# Stable Diffusion with DirectML on Windows
+# AnoAI - Stable Diffusion with DirectML
 
-A clean, user-friendly web application for generating AI images using Stable Diffusion on AMD GPUs with DirectML support on Windows.
+<div align="center">
 
-## Features
+**🎨 Professional AI Image Generation on AMD GPUs**
 
-- **DirectML GPU Support**: Optimized for AMD GPUs (specifically tested on AMD RX 9070 XT)
-- **Force GPU Selection**: Automatically uses GPU device 1 (discrete GPU) instead of integrated GPU
-- **Clean Web UI**: Built with Gradio for an intuitive user experience
-- **Batch Generation**: Generate multiple images from a single prompt
-- **Full Control**: Adjust steps, guidance scale, image dimensions, and seed
-- **Progress Tracking**: Real-time progress updates during generation
-- **Image Management**: Save and download generated images
-- **Error Handling**: User-friendly error messages and graceful failure handling
-- **Modular Design**: Easy to extend and customize
+A powerful, user-friendly desktop application for generating stunning AI images using Stable Diffusion with DirectML support for AMD graphics cards on Windows.
 
-## System Requirements
+[![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/)
+[![DirectML](https://img.shields.io/badge/DirectML-AMD%20GPU-red.svg)](https://github.com/microsoft/DirectML)
+[![Gradio](https://img.shields.io/badge/UI-Gradio-orange.svg)](https://gradio.app/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-- **OS**: Windows 10/11
-- **Python**: 3.10 (recommended)
-- **GPU**: AMD GPU with DirectML support (tested on AMD RX 9070 XT)
-- **RAM**: 8GB minimum, 16GB recommended
-- **Storage**: ~5GB for model files
+[Features](#-features) • [Installation](#-installation) • [Quick Start](#-quick-start) • [Usage](#-usage) • [Documentation](#-documentation)
 
-## Project Structure
+</div>
 
+---
+
+## 🌟 Highlights
+
+- ⚡ **Optimized for AMD GPUs** - Leverages DirectML for hardware acceleration on AMD graphics cards
+- 🎯 **Smart GPU Selection** - Automatically uses your discrete GPU (bypasses integrated graphics)
+- 🖼️ **Beautiful Web UI** - Clean, intuitive interface built with Gradio
+- 🚀 **Production Ready** - Robust error handling and user-friendly error messages
+- 🔧 **Highly Configurable** - Easy-to-edit config file for all settings
+- 📦 **Modular Architecture** - Clean code structure for easy customization
+
+## ✨ Features
+
+### Core Capabilities
+- 🎨 **Text-to-Image Generation** - Create images from text descriptions
+- 📊 **Batch Generation** - Generate multiple variations at once (1-10 images)
+- 🎛️ **Full Control** - Adjust inference steps, guidance scale, dimensions, and seed
+- 💾 **One-Click Save** - Download generated images with organized naming
+- 🔄 **Reproducible Results** - Use seeds to recreate exact images
+
+### Technical Features
+- **DirectML Backend** - Native Windows GPU acceleration for AMD cards
+- **GPU Device Forcing** - Ensures discrete GPU usage (Device 1: AMD RX 9070 XT)
+- **Memory Optimized** - Attention slicing for efficient VRAM usage
+- **Progress Tracking** - Real-time generation progress in the UI
+- **Queue System** - Handles multiple requests gracefully
+
+### User Experience
+- **Preset Prompts** - Start generating immediately with example prompts
+- **Negative Prompts** - Fine-tune results by specifying what to avoid
+- **Error Recovery** - Graceful failure handling with helpful messages
+- **Output Organization** - Auto-generated timestamped filenames
+
+## 📋 System Requirements
+
+| Component | Requirement |
+|-----------|-------------|
+| **OS** | Windows 10/11 (64-bit) |
+| **Python** | 3.10 or higher |
+| **GPU** | AMD GPU with DirectML support |
+| **RAM** | 8GB minimum, 16GB recommended |
+| **Storage** | ~5GB for model files + space for outputs |
+| **Internet** | Required for initial model download |
+
+**Tested Configuration:**
+- AMD Radeon RX 9070 XT (Device 1)
+- Windows 11
+- Python 3.10
+
+## 🚀 Quick Start
+
+### One-Line Install (Windows)
+
+```bash
+# Clone the repository
+git clone https://github.com/mushroom-ano/AnoAI-StableDiffusion.git
+cd AnoAI-StableDiffusion
+
+# Run the setup script
+setup.bat
+
+# Start the application
+start.bat
 ```
-AnoAI/
-├── app.py              # Main application with Gradio UI
-├── gpu_config.py       # GPU configuration and DirectML device selection
-├── sd_pipeline.py      # Stable Diffusion pipeline wrapper
-├── requirements.txt    # Python dependencies
-├── README.md          # This file
-└── outputs/           # Generated images (created automatically)
-```
 
-## Installation
+The web interface will open automatically at `http://127.0.0.1:7860`
 
-### Step 1: Prerequisites
+### First Generation
 
-1. **Update GPU Drivers**: Ensure you have the latest AMD GPU drivers installed
-   - Download from: https://www.amd.com/en/support
+1. Enter a prompt: `"A majestic mountain landscape at sunset, 4k, detailed"`
+2. Click **"🎨 Generate Images"**
+3. Wait 30-60 seconds for your first image
+4. Click **"💾 Save Images"** to download
 
-2. **Install Python 3.10**: Download from https://www.python.org/downloads/
-   - Make sure to check "Add Python to PATH" during installation
+## 📦 Installation
 
-3. **Verify Python Installation**:
+### Method 1: Automated Setup (Recommended)
+
+1. **Download or Clone** this repository:
    ```bash
-   python --version
-   # Should show Python 3.10.x
+   git clone https://github.com/mushroom-ano/AnoAI-StableDiffusion.git
+   cd AnoAI-StableDiffusion
    ```
 
-### Step 2: Create Virtual Environment (Recommended)
-
-Open Command Prompt or PowerShell in the project directory:
-
-```bash
-# Create virtual environment
-python -m venv venv
-
-# Activate it
-venv\Scripts\activate
-
-# You should see (venv) in your prompt
-```
-
-### Step 3: Install Dependencies
-
-```bash
-# Make sure you're in the project directory with requirements.txt
-pip install -r requirements.txt
-```
-
-This will install:
-- `torch-directml`: DirectML backend for PyTorch
-- `diffusers`: Hugging Face diffusers library for Stable Diffusion
-- `transformers`: Required by diffusers
-- `gradio`: Web UI framework
-- `pillow`: Image processing
-- Other utilities
-
-**Note**: The first installation may take several minutes as it downloads all dependencies.
-
-### Step 4: Test GPU Configuration
-
-Before running the full application, test that your GPU is properly detected:
-
-```bash
-python gpu_config.py
-```
-
-You should see output like:
-```
-============================================================
-GPU CONFIGURATION
-============================================================
-Device Id           : 1
-Device Name         : DirectML Device 1
-Backend             : DirectML (Windows)
-Device Object       : privateuseone:0
-============================================================
-Using GPU Device 1 (AMD RX 9070 XT)
-Device 0 (integrated GPU) will be ignored
-============================================================
-```
-
-## Usage
-
-### Starting the Application
-
-1. **Activate Virtual Environment** (if not already activated):
+2. **Run Setup**:
    ```bash
+   setup.bat
+   ```
+   This creates a virtual environment and installs all dependencies.
+
+3. **Start the App**:
+   ```bash
+   start.bat
+   ```
+
+### Method 2: Manual Setup
+
+1. **Create Virtual Environment**:
+   ```bash
+   python -m venv venv
    venv\Scripts\activate
    ```
 
-2. **Run the Application**:
+2. **Install Dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Test Installation** (optional):
+   ```bash
+   python test_installation.py
+   ```
+
+4. **Run Application**:
    ```bash
    python app.py
    ```
 
-3. **First Run**: The first time you run the app, it will:
-   - Download the Stable Diffusion model from Hugging Face (~4-5GB)
-   - Load the model into GPU memory
-   - This may take 5-10 minutes depending on your internet speed
+### First Run Notes
 
-4. **Access the UI**: The app will automatically open in your browser at:
-   - http://127.0.0.1:7860
+⏱️ **First launch takes 5-10 minutes** as it downloads the Stable Diffusion model (~4-5GB)
 
-### Using the Web Interface
+The model is cached locally, so subsequent launches are much faster (5-10 seconds).
 
-#### Prompt Section
-- **Prompt**: Describe what you want to see in detail
-  - Example: "A serene mountain landscape with a crystal clear lake reflecting the golden sunset, detailed, 4k, photorealistic"
-- **Negative Prompt**: Describe what you want to avoid
-  - Example: "ugly, blurry, low quality, distorted, deformed"
+## 🎯 Usage
 
-#### Settings
-- **Steps** (20-50 recommended):
-  - More steps = better quality but slower generation
-  - 20-30 steps: Good for quick iterations
-  - 40-50 steps: High quality results
+### Basic Workflow
 
-- **Guidance Scale** (7-12 recommended):
-  - How closely the AI follows your prompt
-  - Lower (5-7): More creative/varied results
-  - Higher (10-15): More literal interpretation
+1. **Enter Your Prompt**
+   ```
+   A serene Japanese garden with cherry blossoms, koi pond, soft lighting, highly detailed
+   ```
 
-- **Width/Height** (512x512 default):
-  - Must be divisible by 8
-  - 512x512: Fast, good quality
-  - 768x768: Higher quality, slower
-  - 1024x1024: Highest quality, slowest
+2. **Set Negative Prompt** (optional)
+   ```
+   blurry, low quality, distorted, ugly, bad anatomy
+   ```
 
-- **Seed**:
-  - Use `-1` for random seed (different result each time)
-  - Use a specific number (e.g., `42`) to reproduce the same image
+3. **Adjust Settings** (optional)
+   - **Steps**: 20-30 for quick iterations, 40-50 for best quality
+   - **Guidance Scale**: 7-12 for most prompts
+   - **Size**: 512x512 (fast) or 768x768 (better quality)
+   - **Seed**: -1 for random, or specific number to reproduce
 
-- **Number of Images** (1-10):
-  - Generate multiple variations at once
-  - Useful for exploring different interpretations
+4. **Generate & Save**
+   - Click **"🎨 Generate Images"**
+   - Wait for generation (30-60 seconds)
+   - Click **"💾 Save Images"** to download
 
-#### Buttons
-- **Generate Images**: Start the generation process
-- **Save Images**: Save the currently displayed images to the `outputs/` folder
-- **Clear**: Clear the gallery and status message
+### Pro Tips
+
+💡 **Better Prompts**:
+- Be specific and descriptive
+- Include style keywords: "photorealistic", "oil painting", "digital art"
+- Add quality tags: "highly detailed", "4k", "masterpiece"
+- Specify lighting: "golden hour", "studio lighting", "dramatic lighting"
+
+💡 **Performance**:
+- First generation is always slower (model loading)
+- 512x512 @ 30 steps: ~30-45 seconds
+- 768x768 @ 50 steps: ~90-120 seconds
+- Batch generation is more efficient than one-by-one
+
+💡 **Reproducibility**:
+- Copy the seed from successful generations
+- Use same seed + settings to recreate similar images
+- Small prompt changes with same seed = controlled variations
+
+## ⚙️ Configuration
+
+Edit `config.py` to customize:
+
+```python
+# GPU Selection
+GPU_DEVICE_ID = 1  # 0 = integrated GPU, 1 = discrete GPU
+
+# Model Selection
+MODEL_ID = "runwayml/stable-diffusion-v1-5"  # Change to other models
+
+# Default Settings
+DEFAULT_STEPS = 30
+DEFAULT_GUIDANCE_SCALE = 7.5
+DEFAULT_WIDTH = 512
+DEFAULT_HEIGHT = 512
+
+# Server Settings
+SERVER_PORT = 7860
+SHARE_PUBLICLY = False  # Set True to create public URL
+```
+
+### Using Different Models
+
+Popular alternatives:
+```python
+MODEL_ID = "stabilityai/stable-diffusion-2-1"  # SD 2.1, improved quality
+MODEL_ID = "prompthero/openjourney"  # Artistic style
+MODEL_ID = "wavymulder/Analog-Diffusion"  # Analog photo style
+```
+
+## 📁 Project Structure
+
+```
+AnoAI-StableDiffusion/
+├── app.py                 # Main application entry point
+├── gpu_config.py          # DirectML GPU configuration & device selection
+├── sd_pipeline.py         # Stable Diffusion pipeline wrapper
+├── config.py              # User-configurable settings
+├── requirements.txt       # Python dependencies
+├── setup.bat              # Windows automated setup script
+├── start.bat              # Windows app launcher
+├── test_installation.py   # Installation verification script
+├── .gitignore             # Git ignore rules
+├── README.md              # This file
+├── QUICKSTART.md          # Quick reference guide
+└── outputs/               # Generated images (auto-created)
+```
+
+## 🔧 Troubleshooting
+
+### App Won't Start
+
+```bash
+# Verify installation
+python test_installation.py
+
+# Check GPU detection
+python gpu_config.py
+```
+
+### Out of Memory Errors
+
+- Reduce image dimensions (512x512 instead of 768x768)
+- Generate fewer images per batch
+- Close other GPU-intensive applications
+- Enable VAE slicing in `sd_pipeline.py`
+
+### Slow Generation
+
+- First generation is always slow (model loading)
+- Reduce inference steps (20-30 is usually sufficient)
+- Check Task Manager to verify GPU 1 is being used
+- Ensure GPU drivers are up to date
+
+### Generation Fails
+
+- Check console for detailed error messages
+- Verify prompt doesn't have invalid characters
+- Ensure dimensions are divisible by 8
+- Try reducing batch size to 1
+
+## 🛠️ Advanced Usage
+
+### Command Line Arguments
+
+```bash
+# Use different device
+set TORCH_DIRECTML_DEVICE_INDEX=0
+python app.py
+
+# Custom port
+# Edit config.py: SERVER_PORT = 7861
+python app.py
+```
+
+### Adding Custom Features
+
+The modular architecture makes it easy to extend:
+
+- **New schedulers**: Edit `sd_pipeline.py`
+- **Image-to-image**: Extend `StableDiffusionGenerator` class
+- **Custom UI elements**: Modify `create_ui()` in `app.py`
+- **Model presets**: Add to `config.py`
+
+## 📚 Documentation
+
+- **[QUICKSTART.md](QUICKSTART.md)** - Quick reference guide
+- **[GPU Configuration](gpu_config.py)** - How GPU selection works
+- **[Pipeline Details](sd_pipeline.py)** - Stable Diffusion pipeline implementation
 
 ### Example Prompts
 
-**Landscape**:
+**Photorealistic**:
 ```
-Prompt: A majestic mountain range at sunrise, golden hour lighting, mist in valleys, photorealistic, 8k, highly detailed
-Negative: blurry, low quality, oversaturated
+A professional photograph of a steaming cup of coffee on a wooden table,
+morning sunlight streaming through window, shallow depth of field, 4k, highly detailed
+```
+
+**Artistic**:
+```
+A mystical forest with glowing mushrooms, ethereal lighting, fantasy art style,
+vibrant colors, digital painting, trending on artstation
 ```
 
 **Portrait**:
 ```
-Prompt: Portrait of a wise old wizard with long white beard, magical lighting, fantasy art, detailed, digital painting
-Negative: ugly, deformed, cartoon, anime
+Portrait of a wise old wizard with long white beard, magical robes,
+staff with glowing crystal, fantasy art, highly detailed face, dramatic lighting
 ```
 
 **Architecture**:
 ```
-Prompt: Modern minimalist house with large windows, surrounded by forest, architectural photography, natural lighting
-Negative: cluttered, busy, dark, gloomy
+Modern minimalist house with large glass windows, surrounded by nature,
+architectural photography, golden hour lighting, 8k, ultra realistic
 ```
 
-**Sci-Fi**:
-```
-Prompt: Futuristic cyberpunk city at night, neon lights, flying cars, rain, cinematic, blade runner style
-Negative: daylight, bright, low detail
-```
+## 🤝 Contributing
 
-## GPU Configuration
+Contributions are welcome! Areas for improvement:
 
-### Understanding Device Selection
-
-- **Device 0**: Typically the integrated GPU (CPU graphics)
-- **Device 1**: Typically the discrete GPU (your AMD RX 9070 XT)
-
-This application is configured to use **Device 1** by default.
-
-### How GPU Selection Works
-
-The GPU selection happens in `gpu_config.py`:
-
-```python
-# Force DirectML to use device 1 (discrete GPU)
-os.environ['TORCH_DIRECTML_DEVICE_INDEX'] = str(device_id)
-device = torch_directml.device(device_id)
-```
-
-### Changing GPU Device
-
-If you need to use a different device:
-
-1. **Edit `app.py`**, line ~305:
-   ```python
-   app = StableDiffusionApp(
-       device_id=1,  # Change this number
-       model_id="runwayml/stable-diffusion-v1-5"
-   )
-   ```
-
-2. Or set environment variable before running:
-   ```bash
-   set TORCH_DIRECTML_DEVICE_INDEX=0
-   python app.py
-   ```
-
-## Customization
-
-### Using Different Models
-
-You can use any Stable Diffusion model from Hugging Face:
-
-**Edit `app.py`**, line ~306:
-```python
-app = StableDiffusionApp(
-    device_id=1,
-    model_id="stabilityai/stable-diffusion-2-1"  # Change this
-)
-```
-
-Popular models:
-- `runwayml/stable-diffusion-v1-5` (default, balanced)
-- `stabilityai/stable-diffusion-2-1` (improved quality)
-- `prompthero/openjourney` (artistic style)
-- `wavymulder/Analog-Diffusion` (analog photo style)
-
-### Adding Features
-
-The modular structure makes it easy to add features:
-
-- **`gpu_config.py`**: Modify GPU configuration and device management
-- **`sd_pipeline.py`**: Add new generation methods or post-processing
-- **`app.py`**: Extend the UI with new controls or features
-
-Example: Add image-to-image generation in `sd_pipeline.py`
-Example: Add style presets in `app.py`
-
-## Troubleshooting
-
-### Issue: "torch-directml is not installed"
-```bash
-pip install torch-directml
-```
-
-### Issue: "Failed to initialize DirectML device"
-1. Update your AMD GPU drivers
-2. Check if your GPU supports DirectML:
-   ```bash
-   python gpu_config.py
-   ```
-3. Try device 0 instead:
-   ```python
-   device_id=0
-   ```
-
-### Issue: Model download fails
-1. Check your internet connection
-2. Hugging Face may be slow - be patient
-3. Try downloading manually:
-   ```bash
-   from diffusers import StableDiffusionPipeline
-   StableDiffusionPipeline.from_pretrained("runwayml/stable-diffusion-v1-5")
-   ```
-
-### Issue: Out of memory error
-1. Reduce image dimensions (e.g., 512x512 instead of 768x768)
-2. Generate fewer images at once
-3. Close other GPU-intensive applications
-
-### Issue: Generation is very slow
-1. This is normal for the first generation (model loading)
-2. Subsequent generations should be faster
-3. Reduce steps if needed (20-30 is usually enough)
-4. Check Task Manager to ensure GPU 1 is being used
-
-### Issue: Images look low quality
-1. Increase steps (try 40-50)
-2. Adjust guidance scale (try 7-12)
-3. Improve your prompt with more details
-4. Add quality keywords: "highly detailed", "4k", "photorealistic"
-
-### Issue: Web UI doesn't open
-1. Check the console for the actual URL
-2. Manually open: http://127.0.0.1:7860
-3. Check if port 7860 is already in use
-4. Change port in `app.py`:
-   ```python
-   demo.launch(server_port=7861)
-   ```
-
-## Performance Tips
-
-1. **First Generation**: Always slower due to model loading (~1-2 minutes)
-2. **Subsequent Generations**: Much faster (~30-60 seconds for 512x512 @ 30 steps)
-3. **Batch Generation**: More efficient than generating one at a time
-4. **Memory Management**: Close the app when done to free GPU memory
-
-## Output Files
-
-Generated images are saved to:
-```
-AnoAI/outputs/
-├── prompt_name_20250128_143022_1.png
-├── prompt_name_20250128_143022_2.png
-└── ...
-```
-
-File naming format: `{prompt}_{timestamp}_{number}.png`
-
-## Advanced Configuration
-
-### Enable Model Caching
-Models are cached by Hugging Face in:
-```
-C:\Users\{username}\.cache\huggingface\hub
-```
-
-To use a different cache location:
-```bash
-set HF_HOME=D:\Models\HuggingFace
-python app.py
-```
-
-### Memory Optimization
-In `sd_pipeline.py`, you can enable additional optimizations:
-```python
-# Already enabled in the code:
-self.pipeline.enable_attention_slicing()
-
-# You can also try:
-self.pipeline.enable_vae_slicing()  # Reduces VRAM usage
-```
-
-### Share Your UI Publicly
-In `app.py`, change:
-```python
-demo.launch(
-    share=True  # Creates a public URL for 72 hours
-)
-```
-
-## License
-
-This project uses:
-- Stable Diffusion: CreativeML Open RAIL-M License
-- Diffusers library: Apache 2.0 License
-- Gradio: Apache 2.0 License
-
-## Credits
-
-- **Stable Diffusion**: CompVis, Stability AI, and RunwayML
-- **Diffusers**: Hugging Face
-- **DirectML**: Microsoft
-- **Gradio**: Gradio Team
-
-## Support
-
-For issues and questions:
-1. Check the Troubleshooting section above
-2. Verify GPU configuration with `python gpu_config.py`
-3. Check console output for detailed error messages
-4. Ensure all dependencies are installed correctly
-
-## Future Enhancements
-
-Possible additions:
 - [ ] Image-to-image generation
 - [ ] Inpainting support
-- [ ] Style presets
-- [ ] Prompt templates
-- [ ] History/Gallery view
-- [ ] Model switcher in UI
-- [ ] Advanced scheduler options
 - [ ] LoRA support
+- [ ] Multiple model switching in UI
+- [ ] Prompt history/favorites
 - [ ] Upscaling integration
+- [ ] Advanced scheduler options
 
-## Version
+## 📄 License
+
+This project is licensed under the MIT License - see below for details.
+
+### Third-Party Licenses
+
+- **Stable Diffusion**: [CreativeML Open RAIL-M License](https://huggingface.co/spaces/CompVis/stable-diffusion-license)
+- **Diffusers**: Apache 2.0 License
+- **Gradio**: Apache 2.0 License
+- **DirectML**: MIT License
+
+## 🙏 Acknowledgments
+
+- **Stability AI** - For Stable Diffusion
+- **Hugging Face** - For the Diffusers library
+- **Microsoft** - For DirectML
+- **Gradio Team** - For the excellent UI framework
+
+## 📞 Support
+
+- **Issues**: [GitHub Issues](https://github.com/mushroom-ano/AnoAI-StableDiffusion/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/mushroom-ano/AnoAI-StableDiffusion/discussions)
+
+## 🔖 Version
 
 **Version**: 1.0.0
 **Last Updated**: January 2025
@@ -405,4 +363,10 @@ Possible additions:
 
 ---
 
-Enjoy creating AI art with Stable Diffusion! 🎨
+<div align="center">
+
+**⭐ If you find this project useful, please consider giving it a star!**
+
+Made with ❤️ by [mushroom-ano](https://github.com/mushroom-ano)
+
+</div>
